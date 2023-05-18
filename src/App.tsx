@@ -1,24 +1,22 @@
-import logo from "./logo.svg";
 import "./App.css";
+import { useEffect } from "react";
+import LinkList from "./components/LinkList";
+import AddLinkForm from "./components/AddLinkForm";
+import LinkProvider from "./components/LinkContext";
+import Modal from "react-modal";
 
 function App() {
+  useEffect(() => {
+    Modal.setAppElement("#root");
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p className="text-blue-700">
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <LinkProvider>
+      <div className="p-4 space-y-8">
+        <h1 className="text-2xl font-bold">Linktree Clone</h1>
+        <AddLinkForm />
+        <LinkList />
+      </div>
+    </LinkProvider>
   );
 }
 
