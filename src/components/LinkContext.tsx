@@ -1,15 +1,23 @@
-import React, { createContext, useState } from "react";
+import React, {
+  createContext,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from "react";
+import { v4 as uuidv4 } from "uuid";
 
 type Link = {
+  id: string;
   title: string;
   url: string;
 };
 
 type LinkContextType = {
   links: Link[];
+  setLinks: Dispatch<SetStateAction<Link[]>>;
   addLink: (title: string, url: string) => void;
-  deleteLink: (index: number) => void;
-  updateLink: (index: number, title: string, url: string) => void;
+  deleteLink: (id: string) => void;
+  updateLink: (id: string, title: string, url: string) => void;
 };
 
 type LinkProviderProps = {
@@ -22,21 +30,24 @@ const LinkProvider = ({ children }: LinkProviderProps) => {
   const [links, setLinks] = useState<Link[]>([]);
 
   const addLink = (title: string, url: string) => {
-    setLinks((prevLinks) => [...prevLinks, { title, url }]);
+    const newLink = { id: uuidv4(), title, url };
+    setLinks((prevLinks) => [...prevLinks, newLink]);
   };
 
-  const deleteLink = (index: number) => {
-    setLinks((prevLinks) => prevLinks.filter((_, i) => i !== index));
+  const deleteLink = (id: string) => {
+    setLinks((prevLinks) => prevLinks.filter((link) => link.id !== id));
   };
 
-  const updateLink = (index: number, title: string, url: string) => {
+  const updateLink = (id: string, title: string, url: string) => {
     setLinks((prevLinks) =>
-      prevLinks.map((link, i) => (i === index ? { title, url } : link))
+      prevLinks.map((link) => (link.id === id ? { id, title, url } : link))
     );
   };
 
   return (
-    <LinkContext.Provider value={{ links, addLink, deleteLink, updateLink }}>
+    <LinkContext.Provider
+      value={{ links, setLinks, addLink, deleteLink, updateLink }}
+    >
       {children}
     </LinkContext.Provider>
   );

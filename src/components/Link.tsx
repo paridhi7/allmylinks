@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "react-modal";
 import { LinkContext } from "./LinkContext";
+import { FaGripLines } from "react-icons/fa";
 
 if (Modal.defaultStyles.overlay) {
   Modal.defaultStyles.overlay.backgroundColor = "rgba(0,0,0,0.5)";
@@ -28,15 +29,15 @@ interface FormValues {
 }
 
 type LinkProps = {
+  id: string;
   title: string;
   url: string;
-  index: number;
 };
 
 const Link: React.FC<LinkProps> = ({
+  id,
   title: initialTitle,
   url: initialUrl,
-  index,
 }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
@@ -55,7 +56,7 @@ const Link: React.FC<LinkProps> = ({
   };
 
   const handleConfirmDelete = () => {
-    deleteLink(index);
+    deleteLink(id);
     setModalIsOpen(false);
   };
 
@@ -72,20 +73,23 @@ const Link: React.FC<LinkProps> = ({
   };
 
   const handleConfirmEdit = (data: FormValues) => {
-    updateLink(index, data.title, data.url);
+    updateLink(id, data.title, data.url);
     setEditModalIsOpen(false);
   };
 
   return (
     <div className="flex justify-between items-center border rounded p-4">
-      <a
-        href={initialUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-600"
-      >
-        {initialTitle}
-      </a>
+      <div className="flex items-center space-x-2">
+        <FaGripLines style={{ cursor: "move" }} />
+        <a
+          href={initialUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600"
+        >
+          {initialTitle}
+        </a>
+      </div>
       <div className="flex space-x-4">
         <button
           onClick={handleOpenEditModal}
