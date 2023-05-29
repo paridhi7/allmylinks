@@ -41,7 +41,7 @@ const SignIn = () => {
   };
 
   if (authContext && authContext.currentUser) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/admin" replace />;
   }
 
   return (

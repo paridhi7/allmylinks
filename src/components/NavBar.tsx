@@ -1,31 +1,35 @@
-import { useContext } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
 import { AuthContext } from "./AuthProvider";
-import { getAuth, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
+import { Link } from "react-router-dom";
 
-const NavBar = () => {
+const NavBar: React.FC = () => {
   const authContext = useContext(AuthContext);
-  const auth = getAuth();
 
   const handleSignOut = async () => {
-    await signOut(auth);
+    if (authContext && authContext.currentUser) {
+      await signOut(auth);
+    }
   };
 
-  return (
-    <nav>
-      {authContext?.currentUser ? (
-        <>
-          <Link to="/">Home</Link>
-          <button onClick={handleSignOut}>Logout</button>
-        </>
-      ) : (
-        <>
-          <Link to="/signin">Sign In</Link>
-          <Link to="/signup">Sign Up</Link>
-        </>
-      )}
-    </nav>
-  );
+  if (authContext && authContext.currentUser) {
+    return (
+      <nav>
+        <img src="./mainLogo.svg" alt="logo" width="100" height="100" />
+        <Link to="/admin">Admin</Link>
+        <button onClick={handleSignOut}>Sign Out</button>
+      </nav>
+    );
+  } else {
+    return (
+      <nav>
+        <img src="./mainLogo.svg" alt="logo" width="100" height="100" />
+        <Link to="/signin">Sign In</Link>
+        <Link to="/signup">Sign Up</Link>
+      </nav>
+    );
+  }
 };
 
 export default NavBar;
