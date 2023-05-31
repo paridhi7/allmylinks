@@ -1,8 +1,9 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "react-modal";
-import { LinkContext } from "./LinkContext";
 import { FaGripLines } from "react-icons/fa";
+import { doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { db } from "../firebase"; // Import your Firestore instance
 
 if (Modal.defaultStyles.overlay) {
   Modal.defaultStyles.overlay.backgroundColor = "rgba(0,0,0,0.5)";
@@ -32,16 +33,17 @@ type LinkProps = {
   id: string;
   title: string;
   url: string;
+  onDelete: (id: string) => void;
 };
 
 const Link: React.FC<LinkProps> = ({
   id,
   title: initialTitle,
   url: initialUrl,
+  onDelete,
 }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
-  const { deleteLink, updateLink } = useContext(LinkContext);
   const { register, handleSubmit, setValue } = useForm<FormValues>();
 
   useEffect(() => {
@@ -55,9 +57,11 @@ const Link: React.FC<LinkProps> = ({
     setModalIsOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    deleteLink(id);
+  const handleConfirmDelete = async () => {
+    const linkRef = doc(db, "links", id);
+    await deleteDoc(linkRef);
     setModalIsOpen(false);
+    onDelete(id);
   };
 
   const handleCancelDelete = () => {
@@ -72,8 +76,12 @@ const Link: React.FC<LinkProps> = ({
     setEditModalIsOpen(false);
   };
 
-  const handleConfirmEdit = (data: FormValues) => {
-    updateLink(id, data.title, data.url);
+  const handleConfirmEdit = async (data: FormValues) => {
+    const linkRef = doc(db, "links", id);
+    await updateDoc(linkRef, {
+      title: data.title,
+      url: data.url,
+    });
     setEditModalIsOpen(false);
   };
 

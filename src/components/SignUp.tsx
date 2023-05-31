@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { Link, Navigate } from "react-router-dom";
 import { AuthContext } from "./AuthProvider";
 import mainLogo from "../images/amlLogo.png";
+import { FirebaseError } from "firebase/app";
 
 const SignUp = () => {
   const authContext = useContext(AuthContext);
@@ -19,7 +20,21 @@ const SignUp = () => {
       await createUserWithEmailAndPassword(auth, email, password);
       setErrorMessage("");
     } catch (error) {
-      setErrorMessage(`Email ${email} is already taken.`);
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            setErrorMessage(`Email ${email} is already taken.`);
+            break;
+          case "auth/weak-password":
+            setErrorMessage("Password should be at least 6 characters.");
+            break;
+          case "auth/invalid-email":
+            setErrorMessage("The email address is badly formatted.");
+            break;
+          default:
+            setErrorMessage("An error occurred while signing up.");
+        }
+      }
     }
   };
 

@@ -1,41 +1,48 @@
-import { useState, useContext } from "react";
-import { LinkContext } from "./LinkContext";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
-const AddLinkForm: React.FC = () => {
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
-  const { addLink } = useContext(LinkContext);
+type FormValues = {
+  title: string;
+  url: string;
+};
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    addLink(title, url);
-    setTitle("");
-    setUrl("");
+type AddLinkFormProps = {
+  onAddLink: (title: string, url: string) => Promise<void>;
+};
+
+const AddLinkForm: React.FC<AddLinkFormProps> = ({ onAddLink }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { register, handleSubmit, reset } = useForm<FormValues>();
+
+  const onSubmit = async (data: FormValues) => {
+    setIsSubmitting(true);
+    await onAddLink(data.title, data.url);
+    reset();
+    setIsSubmitting(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <input
+        {...register("title")}
         type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Link title"
-        className="block w-full px-4 py-2 rounded-md"
+        className="block w-full border border-gray-300 rounded p-2"
+        placeholder="Title"
         required
       />
       <input
+        {...register("url")}
         type="url"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-        placeholder="Link URL"
-        className="block w-full px-4 py-2 rounded-md"
+        className="block w-full border border-gray-300 rounded p-2"
+        placeholder="URL"
         required
       />
       <button
         type="submit"
-        className="w-full px-4 py-2 rounded-md bg-blue-600 text-white"
+        className="py-2 px-4 rounded bg-blue-600 text-white"
+        disabled={isSubmitting}
       >
-        Add Link
+        {isSubmitting ? "Adding..." : "Add Link"}
       </button>
     </form>
   );

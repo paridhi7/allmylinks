@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { useEffect } from "react";
-import LinkProvider from "./components/LinkContext";
 import Modal from "react-modal";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
@@ -18,24 +17,22 @@ function App() {
 
   return (
     <AuthProvider>
-      <LinkProvider>
-        <Router>
-          <NavBar />
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedWrapper>
-                  <AdminPage />
-                </ProtectedWrapper>
-              }
-            />
-          </Routes>
-        </Router>
-      </LinkProvider>
+      <Router>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedWrapper>
+                <AdminPage />
+              </ProtectedWrapper>
+            }
+          />
+        </Routes>
+      </Router>
     </AuthProvider>
   );
 }

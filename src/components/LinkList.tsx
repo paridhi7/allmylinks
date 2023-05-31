@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { LinkContext } from "./LinkContext";
 import Link from "./Link";
 import {
   DragDropContext,
@@ -7,65 +5,113 @@ import {
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
+import {
+  doc,
+  writeBatch,
+  collection,
+  query,
+  where,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
+import { db } from "../firebase";
+import { LinkType } from "../types";
+import { useState, useEffect } from "react";
+import { auth } from "../firebase";
 
-const LinkList: React.FC = () => {
-  const { links, setLinks } = useContext(LinkContext);
+type LinkListProps = {
+  links: LinkType[];
+  setLinks: React.Dispatch<React.SetStateAction<LinkType[]>>;
+};
 
-  const handleDragEnd = (result: DropResult) => {
+const LinkList: React.FC<LinkListProps> = ({ links, setLinks }) => {
+  const [forceRender, setForceRender] = useState(false);
+
+  useEffect(() => {
+    const userId = auth.currentUser?.uid;
+
+    // Ensure the useEffect does not proceed if no user is logged in
+    if (!userId) return;
+
+    const q = query(
+      collection(db, "links"),
+      where("userId", "==", userId),
+      orderBy("order")
+    );
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const newLinks: LinkType[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        newLinks.push({
+          id: doc.id,
+          title: data.title,
+          url: data.url,
+          order: data.order,
+          timestamp: data.timestamp,
+          userId: data.userId,
+          isActive: data.isActive,
+        });
+      });
+      newLinks.sort((a, b) => a.order - b.order);
+      setLinks(newLinks);
+    });
+
+    return () => unsubscribe();
+  }, [setLinks]);
+
+  const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) {
       return;
     }
 
     const { source, destination } = result;
 
-    setLinks((prevLinks) => {
-      // Copy the array of links
-      const newLinks = Array.from(prevLinks);
+    // Calculate the new links state first
+    const newLinks = Array.from(links);
+    const movedLink = newLinks[source.index];
+    newLinks.splice(source.index, 1);
+    newLinks.splice(destination.index, 0, movedLink);
 
-      // Find the moved item by its id
-      const movedLink = newLinks.find((link) => link.id === result.draggableId);
-
-      // If the link is not found, return the previous state
-      if (!movedLink) {
-        return prevLinks;
-      }
-
-      // Remove the moved item from its old position
-      newLinks.splice(source.index, 1);
-
-      // Insert the moved item at its new position
-      newLinks.splice(destination.index, 0, movedLink);
-
-      return newLinks;
+    // Update the orders in Firestore
+    const batch = writeBatch(db);
+    newLinks.forEach((link, index) => {
+      const linkRef = doc(db, "links", link.id);
+      batch.update(linkRef, { order: index + 1 });
     });
+    await batch.commit();
+
+    // Update the local state
+    setLinks(newLinks);
+    setForceRender((prev) => !prev);
+    console.log(links);
+  };
+
+  const handleLinkDeleted = (deletedLinkId: string) => {
+    setLinks((prevLinks) =>
+      prevLinks.filter((link) => link.id !== deletedLinkId)
+    );
   };
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId="links">
-        {(provided, snapshot) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            style={{
-              backgroundColor: snapshot.isDraggingOver ? "lightblue" : "grey",
-            }}
-          >
+        {(provided) => (
+          <div ref={provided.innerRef} {...provided.droppableProps}>
             {links.map((link, index) => (
               <Draggable key={link.id} draggableId={link.id} index={index}>
-                {(provided, snapshot) => (
+                {(provided) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    style={{
-                      backgroundColor: snapshot.isDragging
-                        ? "lightgreen"
-                        : "white",
-                      ...provided.draggableProps.style,
-                    }}
                   >
-                    <Link title={link.title} url={link.url} id={link.id} />
+                    <Link
+                      id={link.id}
+                      title={link.title}
+                      url={link.url}
+                      onDelete={handleLinkDeleted}
+                    />
                   </div>
                 )}
               </Draggable>
