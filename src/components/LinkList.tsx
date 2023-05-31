@@ -25,8 +25,6 @@ type LinkListProps = {
 };
 
 const LinkList: React.FC<LinkListProps> = ({ links, setLinks }) => {
-  const [forceRender, setForceRender] = useState(false);
-
   useEffect(() => {
     const userId = auth.currentUser?.uid;
 
@@ -83,8 +81,6 @@ const LinkList: React.FC<LinkListProps> = ({ links, setLinks }) => {
 
     // Update the local state
     setLinks(newLinks);
-    setForceRender((prev) => !prev);
-    console.log(links);
   };
 
   const handleLinkDeleted = (deletedLinkId: string) => {
