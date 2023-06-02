@@ -16,7 +16,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { LinkType } from "../types";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { auth } from "../firebase";
 
 type LinkListProps = {

@@ -9,6 +9,7 @@ import NavBar from "./components/NavBar";
 import ProtectedWrapper from "./components/ProtectedWrapper";
 import LandingPage from "./components/LandingPage";
 import AdminPage from "./components/AdminPage";
+import UserPage from "./components/UserPage";
 
 function App() {
   useEffect(() => {
@@ -31,6 +32,7 @@ function App() {
               </ProtectedWrapper>
             }
           />
+          <Route path="/:username" element={<UserPage />} />{" "}
         </Routes>
       </Router>
     </AuthProvider>

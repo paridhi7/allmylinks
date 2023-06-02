@@ -8,6 +8,7 @@ import {
   orderBy,
   doc,
   setDoc,
+  getDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import AddLinkForm from "./AddLinkForm";
@@ -17,11 +18,22 @@ import { LinkType } from "../types";
 
 const AdminPage: React.FC = () => {
   const [links, setLinks] = useState<LinkType[]>([]);
+  const [username, setUsername] = useState<string | null>(null);
 
   const authContext = useContext(AuthContext);
   const user = authContext?.currentUser;
 
   useEffect(() => {
+    const fetchUsername = async () => {
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setUsername(docSnap.data()?.username || null);
+        }
+      }
+    };
     const fetchData = async () => {
       const q = query(
         collection(db, "links"),
@@ -39,6 +51,7 @@ const AdminPage: React.FC = () => {
 
     if (user) {
       fetchData();
+      fetchUsername();
     }
   }, [user]);
 
@@ -75,6 +88,11 @@ const AdminPage: React.FC = () => {
     <div>
       <AddLinkForm onAddLink={handleAddLink} />
       <LinkList links={links} setLinks={setLinks} />
+      {user && (
+        <a href={`/${username}`} target="_blank" rel="noopener noreferrer">
+          Open My Links
+        </a>
+      )}
     </div>
   );
 };

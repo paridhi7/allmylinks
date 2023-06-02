@@ -1,10 +1,19 @@
 import { useState, useContext } from "react";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { Link, Navigate } from "react-router-dom";
 import { AuthContext } from "./AuthProvider";
 import mainLogo from "../images/amlLogo.png";
 import { FirebaseError } from "firebase/app";
+import { User } from "firebase/auth";
+import {
+  collection,
+  setDoc,
+  getDocs,
+  query,
+  where,
+  doc,
+} from "firebase/firestore";
 
 const SignUp = () => {
   const authContext = useContext(AuthContext);
@@ -13,13 +22,42 @@ const SignUp = () => {
   const [username, setUsername] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const usernameExists = async (username: string) => {
+    const q = query(collection(db, "users"), where("username", "==", username));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  };
+
+  const saveUserToFirestore = async (user: User | null) => {
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+
+      const userData = {
+        username,
+        email: user.email,
+      };
+
+      await setDoc(userRef, userData);
+    }
+  };
+
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      if (await usernameExists(username)) {
+        setErrorMessage("Username is already taken.");
+        return;
+      }
+      const credential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       setErrorMessage("");
+      await saveUserToFirestore(credential.user);
     } catch (error) {
+      console.log("error", error);
       if (error instanceof FirebaseError) {
         switch (error.code) {
           case "auth/email-already-in-use":
