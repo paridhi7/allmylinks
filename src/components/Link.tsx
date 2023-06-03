@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import { FaGripLines } from "react-icons/fa";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase"; // Import your Firestore instance
+import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 
 if (Modal.defaultStyles.overlay) {
   Modal.defaultStyles.overlay.backgroundColor = "rgba(0,0,0,0.5)";
@@ -86,14 +87,14 @@ const Link: React.FC<LinkProps> = ({
   };
 
   return (
-    <div className="flex justify-between items-center border rounded p-4">
+    <div className="flex justify-between items-center border rounded p-4 max-w-sm mx-auto">
       <div className="flex items-center space-x-2">
         <FaGripLines style={{ cursor: "move" }} />
         <a
           href={initialUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600"
+          className="text-indigo-600 hover:text-indigo-500"
         >
           {initialTitle}
         </a>
@@ -101,15 +102,15 @@ const Link: React.FC<LinkProps> = ({
       <div className="flex space-x-4">
         <button
           onClick={handleOpenEditModal}
-          className="bg-blue-500 text-white py-2 px-4 rounded"
+          className="text-gray-500 hover:text-indigo-500"
         >
-          Edit
+          <AiFillEdit size={24} />
         </button>
         <button
           onClick={handleDelete}
-          className="bg-red-500 text-white py-2 px-4 rounded"
+          className="text-gray-500 hover:text-red-500"
         >
-          Delete
+          <AiFillDelete size={24} />
         </button>
       </div>
       <Modal

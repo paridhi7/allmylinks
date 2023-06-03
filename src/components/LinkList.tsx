@@ -92,15 +92,29 @@ const LinkList: React.FC<LinkListProps> = ({ links, setLinks }) => {
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId="links">
-        {(provided) => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="max-w-sm mx-auto"
+            style={{
+              backgroundColor: snapshot.isDraggingOver ? "#F3F3F1" : "grey",
+            }}
+          >
             {links.map((link, index) => (
               <Draggable key={link.id} draggableId={link.id} index={index}>
-                {(provided) => (
+                {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
+                    className="max-w-sm mx-auto"
+                    style={{
+                      backgroundColor: snapshot.isDragging
+                        ? "#C5E0FE"
+                        : "white",
+                      ...provided.draggableProps.style,
+                    }}
                   >
                     <Link
                       id={link.id}

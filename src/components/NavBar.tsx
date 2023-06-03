@@ -2,10 +2,12 @@ import React, { useContext } from "react";
 import { AuthContext } from "./AuthProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import mainLogo from "../images/amlLogo.png";
 
 const NavBar: React.FC = () => {
   const authContext = useContext(AuthContext);
+  const location = useLocation();
 
   const handleSignOut = async () => {
     if (authContext && authContext.currentUser) {
@@ -13,23 +15,61 @@ const NavBar: React.FC = () => {
     }
   };
 
-  if (authContext && authContext.currentUser) {
-    return (
-      <nav>
-        <img src="./mainLogo.svg" alt="logo" width="100" height="100" />
-        <Link to="/admin">Admin</Link>
-        <button onClick={handleSignOut}>Sign Out</button>
-      </nav>
-    );
-  } else {
-    return (
-      <nav>
-        <img src="./mainLogo.svg" alt="logo" width="100" height="100" />
-        <Link to="/signin">Sign In</Link>
-        <Link to="/signup">Sign Up</Link>
-      </nav>
-    );
+  if (!["/", "/admin"].includes(location.pathname)) {
+    return null;
   }
+
+  const logoLink = location.pathname === "/admin" ? "/admin" : "/";
+
+  return (
+    <nav className="flex items-center justify-between py-2 px-4 bg-white">
+      <Link to={logoLink}>
+        <img src={mainLogo} alt="logo" className="w-16 h-16" />
+      </Link>
+      <div className="flex items-center space-x-4">
+        {authContext && authContext.currentUser ? (
+          location.pathname === "/admin" ? (
+            <button
+              onClick={handleSignOut}
+              className="px-4 py-2 text-lg text-white bg-red-600 rounded hover:bg-red-700 transition-colors duration-200"
+            >
+              Sign Out
+            </button>
+          ) : (
+            <>
+              <Link
+                to="/admin"
+                className="text-lg text-gray-700 hover:text-indigo-600 transition-colors duration-200"
+              >
+                Admin
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="px-4 py-2 text-lg text-white bg-red-600 rounded hover:bg-red-700 transition-colors duration-200"
+              >
+                Sign Out
+              </button>
+            </>
+          )
+        ) : (
+          <>
+            <Link
+              to="/signin"
+              className="text-lg text-gray-700 hover:text-indigo-600 transition-colors duration-200"
+            >
+              Sign In
+            </Link>
+            <Link
+              to="/signup"
+              className="px-4 py-2 text-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
+            >
+              Sign Up
+            </Link>
+          </>
+        )}
+      </div>
+    </nav>
+  );
 };
 
 export default NavBar;

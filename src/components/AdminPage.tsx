@@ -85,14 +85,21 @@ const AdminPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="">
       <AddLinkForm onAddLink={handleAddLink} />
       <LinkList links={links} setLinks={setLinks} />
-      {user && (
-        <a href={`/${username}`} target="_blank" rel="noopener noreferrer">
-          Open My Links
-        </a>
-      )}
+      <div className="flex justify-center pt-4">
+        {user && (
+          <a
+            href={`/${username}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-4 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-500"
+          >
+            Open My Links
+          </a>
+        )}
+      </div>
     </div>
   );
 };

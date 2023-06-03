@@ -22,7 +22,10 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({ onAddLink }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-md mx-auto space-y-4 py-11"
+    >
       <input
         {...register("title")}
         type="text"
@@ -37,13 +40,15 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({ onAddLink }) => {
         placeholder="URL"
         required
       />
-      <button
-        type="submit"
-        className="py-2 px-4 rounded bg-blue-600 text-white"
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? "Adding..." : "Add Link"}
-      </button>
+      <div className="flex justify-center">
+        <button
+          type="submit"
+          className="py-2 px-4 rounded bg-indigo-600 hover:bg-indigo-500 text-white"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Adding..." : "Add Link"}
+        </button>
+      </div>
     </form>
   );
 };
