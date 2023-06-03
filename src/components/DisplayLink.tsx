@@ -10,7 +10,7 @@ const DisplayLink: React.FC<DisplayLinkProps> = ({ title, url }) => {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="bg-white text-gray-900 hover:text-indigo-500 rounded-lg px-32 py-2 mb-2 w-full text-left block"
+      className="bg-white text-gray-900 hover:text-indigo-500 rounded-lg px-32 py-2 mb-2 w-full text-center block"
     >
       {title}
     </a>

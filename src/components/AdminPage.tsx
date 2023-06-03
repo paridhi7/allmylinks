@@ -89,7 +89,7 @@ const AdminPage: React.FC = () => {
       <AddLinkForm onAddLink={handleAddLink} />
       <LinkList links={links} setLinks={setLinks} />
       <div className="flex justify-center pt-4">
-        {user && (
+        {user && links.length > 0 && (
           <a
             href={`/${username}`}
             target="_blank"
