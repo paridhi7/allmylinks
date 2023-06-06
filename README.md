@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Your digital world, unified under one link.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The open source Linktree alternative. Capture your world within a single link. 
 
 ## Available Scripts
 
