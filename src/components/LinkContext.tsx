@@ -54,38 +54,3 @@ const LinkProvider = ({ children }: LinkProviderProps) => {
 };
 
 export default LinkProvider;
-
-// import React, { createContext, useState } from 'react';
-
-// type LinkType = {
-//     title: string,
-//     url: string
-// }
-
-// type LinkContextType = {
-//     links: LinkType[],
-//     addLink: (newLink: LinkType) => void
-// }
-
-// export const LinkContext = createContext<LinkContextType>({
-//     links: [],
-//     addLink: () => {}
-// });
-
-// type LinkProviderProps = {
-//     children: React.ReactNode
-// }
-
-// export const LinkProvider: React.FC<LinkProviderProps> = ({ children }) => {
-//     const [links, setLinks] = useState<LinkType[]>([]);
-
-//     const addLink = (newLink: LinkType) => {
-//         setLinks([...links, newLink]);
-//     }
-
-//     return (
-//         <LinkContext.Provider value={{ links, addLink }}>
-//             {children}
-//         </LinkContext.Provider>
-//     );
-// }

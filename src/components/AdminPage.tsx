@@ -1,105 +1,40 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "./AuthProvider";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  doc,
-  setDoc,
-  getDoc,
-  serverTimestamp,
-} from "firebase/firestore";
-import AddLinkForm from "./AddLinkForm";
-import LinkList from "./LinkList";
-import { db } from "../firebase";
-import { LinkType } from "../types";
+import React from "react";
+import { Navigate, useLocation, Routes, Route, Link } from "react-router-dom";
+import LinksTab from "./LinksTab";
+import AppearanceTab from "./AppearanceTab";
 
 const AdminPage: React.FC = () => {
-  const [links, setLinks] = useState<LinkType[]>([]);
-  const [username, setUsername] = useState<string | null>(null);
-
-  const authContext = useContext(AuthContext);
-  const user = authContext?.currentUser;
-
-  useEffect(() => {
-    const fetchUsername = async () => {
-      if (user) {
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          setUsername(docSnap.data()?.username || null);
-        }
-      }
-    };
-    const fetchData = async () => {
-      const q = query(
-        collection(db, "links"),
-        where("userId", "==", user?.uid),
-        orderBy("order")
-      );
-
-      const querySnapshot = await getDocs(q);
-      const fetchedLinks = querySnapshot.docs.map((doc) => {
-        return { id: doc.id, ...doc.data() } as LinkType;
-      });
-
-      setLinks(fetchedLinks);
-    };
-
-    if (user) {
-      fetchData();
-      fetchUsername();
-    }
-  }, [user]);
-
-  const getMaxOrder = (links: LinkType[]): number => {
-    if (links.length === 0) {
-      return 0;
-    }
-    let maxOrder = 0;
-    for (const link of links) {
-      if (link.order > maxOrder) {
-        maxOrder = link.order;
-      }
-    }
-    return maxOrder;
-  };
-
-  const handleAddLink = async (title: string, url: string) => {
-    const newLink = {
-      title,
-      url,
-      timestamp: serverTimestamp(),
-      userId: user?.uid,
-      isActive: true,
-      order: getMaxOrder(links) + 1,
-    } as LinkType;
-
-    const docRef = doc(collection(db, "links"));
-    await setDoc(docRef, newLink);
-
-    setLinks((prevLinks) => [newLink, ...prevLinks]);
-  };
+  const location = useLocation();
 
   return (
-    <div className="">
-      <AddLinkForm onAddLink={handleAddLink} />
-      <LinkList links={links} setLinks={setLinks} />
-      <div className="flex justify-center pt-4">
-        {user && links.length > 0 && (
-          <a
-            href={`/${username}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block px-4 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-500"
-          >
-            Open My Links
-          </a>
-        )}
+    <div className="m-4">
+      <div className="flex justify-start gap-4 items-center border-b-2 border-gray-200 mb-4">
+        <Link
+          to="."
+          className={`text-lg py-2 ${
+            location.pathname.endsWith("/admin")
+              ? "border-b-4 border-indigo-600"
+              : "text-gray-500"
+          }`}
+        >
+          Links
+        </Link>
+        <Link
+          to="appearance"
+          className={`text-lg py-2 ${
+            location.pathname.includes("appearance")
+              ? "border-b-4 border-indigo-600"
+              : "text-gray-500"
+          }`}
+        >
+          Appearance
+        </Link>
       </div>
+      <Routes>
+        <Route path="/" element={<LinksTab />} />
+        <Route path="appearance" element={<AppearanceTab />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </div>
   );
 };

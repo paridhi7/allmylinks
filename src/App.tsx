@@ -25,7 +25,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route
-            path="/admin"
+            path="/admin/*"
             element={
               <ProtectedWrapper>
                 <AdminPage />

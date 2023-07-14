@@ -15,7 +15,7 @@ const NavBar: React.FC = () => {
     }
   };
 
-  if (!["/", "/admin"].includes(location.pathname)) {
+  if (!["/", "/admin", "/admin/appearance"].includes(location.pathname)) {
     return null;
   }
 
