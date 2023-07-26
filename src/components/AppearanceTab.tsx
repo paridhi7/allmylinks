@@ -32,7 +32,7 @@ const AppearanceTab: React.FC = () => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          setTitle(docSnap.data()?.title || null);
+          setTitle(docSnap.data()?.title || "@" + docSnap.data()?.username);
           setBio(docSnap.data()?.bio || null);
           setImageUrl(docSnap.data()?.imageUrl || null);
           setImagePath(docSnap.data()?.imagePath || null);
@@ -70,7 +70,8 @@ const AppearanceTab: React.FC = () => {
   };
 
   const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setBio(e.target.value);
+    const newBio = e.target.value;
+    setBio(newBio.substr(0, 35));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -211,6 +212,9 @@ const AppearanceTab: React.FC = () => {
             onChange={handleBioChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
+          <p className="text-sm text-gray-500">
+            {`${(bio && bio.length) || 0}/35`}
+          </p>
         </div>
         <button
           type="submit"
