@@ -31,7 +31,7 @@ const NavBar: React.FC = () => {
           location.pathname === "/admin" ? (
             <button
               onClick={handleSignOut}
-              className="px-4 py-2 text-lg text-white bg-red-600 rounded hover:bg-red-700 transition-colors duration-200"
+              className="px-3.5 py-2.5 text-lg text-white bg-red-600 rounded hover:bg-red-700 transition-colors duration-200"
             >
               Sign Out
             </button>
@@ -45,7 +45,7 @@ const NavBar: React.FC = () => {
               </Link>
               <button
                 onClick={handleSignOut}
-                className="px-4 py-2 text-lg text-white bg-red-600 rounded hover:bg-red-700 transition-colors duration-200"
+                className="px-3.5 py-2.5 text-lg text-white bg-red-600 rounded hover:bg-red-700 transition-colors duration-200"
               >
                 Sign Out
               </button>
@@ -61,7 +61,7 @@ const NavBar: React.FC = () => {
             </Link>
             <Link
               to="/signup"
-              className="px-4 py-2 text-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
+              className="px-3.5 py-2.5 rounded-md text-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
             >
               Sign Up
             </Link>

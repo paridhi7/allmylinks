@@ -4,7 +4,7 @@ import { db } from "../firebase";
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { LinkType } from "../types";
 import DisplayLink from "./DisplayLink";
-import Logo from "../images/completeLogo.png";
+import LogoBlack from "../images/logoBlack.png";
 
 const UserPage = () => {
   const { username } = useParams();
@@ -71,7 +71,7 @@ const UserPage = () => {
         rel="noopener noreferrer"
         className="absolute bottom-20"
       >
-        <img src={Logo} alt="logo" className="h-8 w-auto" />
+        <img src={LogoBlack} alt="logo" className="h-8 w-auto" />
       </a>
       <p className="absolute bottom-8">
         Made with ❤ by{" "}
