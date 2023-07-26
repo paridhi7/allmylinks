@@ -71,7 +71,7 @@ const AppearanceTab: React.FC = () => {
 
   const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newBio = e.target.value;
-    setBio(newBio.substr(0, 35));
+    setBio(newBio.substr(0, 80));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -213,7 +213,7 @@ const AppearanceTab: React.FC = () => {
             className="w-full p-2 border border-gray-300 rounded"
           />
           <p className="text-sm text-gray-500">
-            {`${(bio && bio.length) || 0}/35`}
+            {`${(bio && bio.length) || 0}/80`}
           </p>
         </div>
         <button
