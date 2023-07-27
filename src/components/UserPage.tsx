@@ -48,7 +48,7 @@ const UserPage = () => {
   }, [username]);
 
   return (
-    <div className="flex flex-col items-center justify-between min-h-screen bg-gradient-to-r from-purple-500 to-pink-500 text-white relative">
+    <div className="flex flex-col items-center gap-8 min-h-screen bg-gradient-to-r from-purple-500 to-pink-500 text-white lg:relative">
       <div className="flex flex-col items-center justify-center pt-28 max-w-lg">
         {imageUrl && (
           <img
@@ -65,25 +65,27 @@ const UserPage = () => {
           <DisplayLink key={link.id} title={link.title} url={link.url} />
         ))}
       </div>
-      <a
-        href="/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="absolute bottom-20"
-      >
-        <img src={LogoBlack} alt="logo" className="h-8 w-auto" />
-      </a>
-      <p className="absolute bottom-8">
-        Made with ❤ by{" "}
+      <div className="flex flex-col items-center gap-1">
         <a
-          href="/paridhi"
+          href="/"
           target="_blank"
           rel="noopener noreferrer"
-          className="underline underline-offset-1"
+          className="lg:absolute lg:bottom-16"
         >
-          Paridhi Agarwal
+          <img src={LogoBlack} alt="logo" className="h-8 w-auto" />
         </a>
-      </p>
+        <p className="lg:absolute lg:bottom-8">
+          Made with ❤ by{" "}
+          <a
+            href="/paridhi"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-1"
+          >
+            Paridhi Agarwal
+          </a>
+        </p>
+      </div>
     </div>
   );
 };
