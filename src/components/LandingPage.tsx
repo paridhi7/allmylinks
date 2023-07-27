@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
-import NavBar from "./NavBar";
 
 const LandingPage: React.FC = () => {
   return (
