@@ -52,7 +52,7 @@ const NavBar: React.FC = () => {
       </Link>
       <div className="flex items-center space-x-4">
         {authContext && authContext.currentUser ? (
-          ["/", "/admin", "/admin/appearance", "/admin/milestones"].includes(
+          ["/admin", "/admin/appearance", "/admin/milestones"].includes(
             location.pathname
           ) ? (
             <>
