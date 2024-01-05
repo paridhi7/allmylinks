@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, useLocation, Routes, Route, Link } from "react-router-dom";
 import LinksTab from "./LinksTab";
 import AppearanceTab from "./AppearanceTab";
+import MilestonesTab from "./MilestonesTab";
 
 const AdminPage: React.FC = () => {
   const location = useLocation();
@@ -20,6 +21,16 @@ const AdminPage: React.FC = () => {
           Links
         </Link>
         <Link
+          to="milestones"
+          className={`text-lg py-2 ${
+            location.pathname.endsWith("milestones")
+              ? "border-b-4 border-indigo-600"
+              : "text-gray-500"
+          }`}
+        >
+          Milestones
+        </Link>
+        <Link
           to="appearance"
           className={`text-lg py-2 ${
             location.pathname.includes("appearance")
@@ -33,6 +44,7 @@ const AdminPage: React.FC = () => {
       <Routes>
         <Route path="/" element={<LinksTab />} />
         <Route path="appearance" element={<AppearanceTab />} />
+        <Route path="milestones" element={<MilestonesTab />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>

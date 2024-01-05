@@ -9,3 +9,12 @@ export type LinkType = {
   isActive: boolean;
   order: number;
 };
+
+export type MilestoneType = {
+  id: string;
+  title: string;
+  description?: string;
+  url?: string;
+  date: string;
+  userId: string | null;
+};
