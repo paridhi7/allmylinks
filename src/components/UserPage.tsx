@@ -2,16 +2,21 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
-import { LinkType } from "../types";
+import { LinkType, MilestoneType } from "../types";
 import DisplayLink from "./DisplayLink";
+import DisplayMilestone from "./DisplayMilestone";
 import LogoBlack from "../images/logoBlack.png";
+import { groupByYear } from "../utils";
+import React from "react";
 
 const UserPage = () => {
   const { username } = useParams();
   const [links, setLinks] = useState<LinkType[]>([]);
+  const [milestones, setMilestones] = useState<MilestoneType[]>([]);
   const [title, setTitle] = useState<string | null>(null);
   const [bio, setBio] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("links");
 
   useEffect(() => {
     const fetchLinks = async () => {
@@ -40,16 +45,51 @@ const UserPage = () => {
           return { id: doc.id, ...doc.data() } as LinkType;
         });
         setLinks(fetchedLinks);
-        console.log(fetchedLinks);
+
+        const milestonesQuery = query(
+          collection(db, "milestones"),
+          where("userId", "==", userId),
+          orderBy("date", "desc")
+        );
+        const milestonesSnapshot = await getDocs(milestonesQuery);
+        const fetchedMilestones = milestonesSnapshot.docs.map((doc) => {
+          return { id: doc.id, ...doc.data() } as MilestoneType;
+        });
+
+        setMilestones(fetchedMilestones);
       }
     };
 
     fetchLinks();
   }, [username]);
 
+  const renderTabContent = () => {
+    if (activeTab === "links") {
+      return links.map((link) => (
+        <DisplayLink key={link.id} title={link.title} url={link.url} />
+      ));
+    } else if (activeTab === "milestones") {
+      const milestonesByYear = groupByYear(milestones);
+      return milestonesByYear.map((group) => (
+        <React.Fragment key={group.year}>
+          <div className="text-2xl font-bold pt-8">{group.year}</div>
+          {group.milestones.map((milestone) => (
+            <DisplayMilestone
+              key={milestone.id}
+              title={milestone.title}
+              description={milestone.description}
+              url={milestone.url}
+              date={milestone.date}
+            />
+          ))}
+        </React.Fragment>
+      ));
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-8 min-h-screen bg-gradient-to-r from-purple-500 to-pink-500 text-white lg:relative">
-      <div className="flex flex-col items-center justify-center pt-28 max-w-lg">
+      <div className="flex flex-col items-center justify-center pt-28 max-w-5xl">
         {imageUrl && (
           <img
             src={imageUrl}
@@ -61,11 +101,34 @@ const UserPage = () => {
           {title || "@" + username}
         </h1>
         {bio && <p className="mb-8 mx-8 text-center">{bio}</p>}
-        {links.map((link) => (
-          <DisplayLink key={link.id} title={link.title} url={link.url} />
-        ))}
+        {/* Tab headers */}
+        <div className="flex justify-center gap-12 mb-8">
+          <button
+            onClick={() => setActiveTab("links")}
+            className={`text-xl p-2 ${
+              activeTab === "links"
+                ? "text-white border-b-4 border-purple-600"
+                : "text-gray-300"
+            }`}
+          >
+            Links
+          </button>
+          <button
+            onClick={() => setActiveTab("milestones")}
+            className={`text-xl p-2 ${
+              activeTab === "milestones"
+                ? "text-white border-b-4 border-purple-600"
+                : "text-gray-300"
+            }`}
+          >
+            Milestones
+          </button>
+        </div>
+
+        {/* Tab content */}
+        <div className="w-full px-4">{renderTabContent()}</div>
       </div>
-      <div className="flex flex-col items-center gap-1">
+      <div className="flex flex-col items-center gap-1 mb-28">
         <a
           href="/"
           target="_blank"
